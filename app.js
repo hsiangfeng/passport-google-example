@@ -4,6 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const passport = require('passport');
+const GoogleStrategy = require( 'passport-google-oauth20' ).Strategy;
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
@@ -19,6 +22,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+passport.use(new GoogleStrategy({
+  clientID:     'clientID',
+  clientSecret: 'clientSecret',
+  callbackURL: "http://localhost:3000/auth/google/callback",
+  },
+  (accessToken, refreshToken, profile, cb) => {
+    return cb(null, profile);
+  }
+));
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
